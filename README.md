@@ -11,76 +11,67 @@ consolidates information on sensor modalities, sampling cadence, size,
 labelling strategy and licence to help you assess whether it suits your
 needs. By focusing on datasets with contextual labels (maintenance
 events, fault windows or operating regimes) we hope to encourage the
-development of methods -- such as recurrent VAEs -- that adapt to
-evolving "normal" behaviour rather than assuming a static distribution.
+development of new methods.
+## ⚡ TL;DR — Quick Overview of Datasets
 
+- **[CWRU Bearing Data Center](https://engineering.case.edu/bearingdatacenter)**  
+  - Classic bearing fault dataset with vibration signals (12–48 kHz).  
+  - 4 sets covering normal and 3 fault types (inner, outer, ball).  
+  - MATLAB files; well-documented and widely used.  
+  - ✅ Labelled anomalies | ⚙️ Real data | 🧠 Moderate suitability for RNN-VAE.  
+
+- **[Paderborn Bearing (KAt DataCenter)](https://mb.uni-paderborn.de/kat/forschung/kat-datacenter/bearing-datacenter/data-sets-and-download)**  
+  - 32 bearing states under 4 conditions; real and artificial faults.  
+  - Multi-sensor MAT files (current, vibration, torque, etc.).  
+  - ✅ Labelled anomalies | ⚙️ Real data | 🧠 Moderate suitability for RNN-VAE.  
+
+- **[Bearing Ring Grinder (SKF)](https://researchdata.se/en/catalogue/dataset/2022-136-1)**  
+  - Multi-sensor TDMS dataset from industrial grinding process.  
+  - 7 runs × 7 dressing cycles × 15 rings (~735 cycles).  
+  - Rich vibration/acoustic data with failure classification.  
+  - ✅ Labelled anomalies | ⚙️ Real data | 🧠 High suitability for RNN-VAE.  
+
+- **[Hydropower Turbine Friction Monitoring](https://researchdata.se/en/catalogue/dataset/2025-35)**  
+  - 2 turbines monitored via pressure & temperature (1 sample/min).  
+  - CSV files with clear variable documentation.  
+  - ⚠️ No anomaly labels | ⚙️ Real data | 🧠 Moderate (drift modeling).  
+
+- **[IMAD-DS (Industrial Multi-Sensor Anomaly Detection)](https://zenodo.org/records/12665499)**  
+  - Two machines (RoboticArm, BrushlessMotor) with domain shifts.  
+  - Multi-rate audio and vibration sensors (Parquet + CSV).  
+  - ✅ Train/test split | 🧠 High suitability for RNN-VAE.  
+  - 🪪 CC BY-SA 4.0 | Excellent modern benchmark.  
+
+- **[MetroPT-3 (UCI)](https://archive.ics.uci.edu/dataset/791/metropt+3+dataset)**  
+  - 1.5 M samples, 15 features from metro propulsion systems.  
+  - Failure logs allow anomaly labeling; ideal for long-sequence modeling.  
+  - ✅ Labelled failures | ⚙️ Real data | 🧠 High suitability for RNN-VAE.  
+
+- **[Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance)**  
+  - Large synthetic-style dataset (telemetry + logs + failures).  
+  - 5 linked CSVs, suitable for supervised PdM tasks.  
+  - ✅ Labelled anomalies | ⚙️ Realistic synthetic | 🧠 High suitability for RNN-VAE.  
+
+- **[SCANIA Component X](https://researchdata.se/en/catalogue/dataset/2024-34)**  
+  - High-dimensional truck telemetry dataset for failure prediction.  
+  - 107 features + time-to-event and classification labels.  
+  - ✅ Labelled failures | ⚙️ Real data | 🧠 High suitability for RNN-VAE.  
+
+- **[Wind Turbine SCADA (CARE to Compare)](https://zenodo.org/records/15846963)**  
+  - 95 turbine datasets (44 anomalous, 51 normal).  
+  - 86 – 957 features, 10-min resolution, 1 year of training each.  
+  - ✅ Labelled anomalies | ⚙️ Real data | 🧠 High suitability for RNN-VAE.  
+
+
+---
+
+### ⚠️ Disclaimer  
+This document was prepared with the assistance of **OpenAI’s GPT-5** model.  
+While the content has been carefully reviewed, it may contain **minor inaccuracies or omissions** due to the automated generation process.  
+Please **verify critical dataset details** (e.g., licensing terms, sample rates, and feature definitions) before using them in research or production.
+
+---
 ## Dataset summary
-
-The table below summarises the key characteristics of each dataset. The
-**feature type** column gives a high‑level description of the sensor
-modalities; **# instances** refers to the number of time steps or
-segments provided (when available); **# features** is the approximate
-number of variables per time stamp; **Approx. size (GB)** gives an
-order‑of‑magnitude estimate when file sizes or record counts are known;
-the **Data type** indicates whether the data are real or synthetic; and
-the **Link** points to the official data source.
-
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Dataset               Feature type        \# instances            \# features  Approx.    Data type    Link
-                                                                                 size (GB)               
-  --------------------- ------------------- ----------------------- ------------ ---------- ------------ --------------------------------------------------------------------------------------------------------------
-  **CWRU Bearing Data   High‑frequency      Varies (4--10 s         \~3--4       N/A        Real         [source](https://engineering.case.edu/bearingdatacenter)
-  Center**              vibration sensors   segments)               channels                             
-                        (drive‑end,                                                                      
-                        fan‑end, base) and                                                               
-                        shaft speed                                                                      
-
-  **Paderborn Bearing   Motor current,      Varies (4‑s             Multiple     N/A        Real         [source](https://mb.uni-paderborn.de/kat/forschung/kat-datacenter/bearing-datacenter/data-sets-and-download)
-  (KAt DataCenter)**    vibration, shaft    measurements)           (current,                            
-                        speed & torque                              vibration,                           
-                                                                    speed,                               
-                                                                    torque)                              
-
-  **Bearing Ring        Multi‑sensor TDMS   Not specified           Multiple     N/A        Real         [source](https://researchdata.se/en/catalogue/dataset/2022-136-1)
-  Grinder (SKF)**       (vibration,         (continuous raw data)   analogue &                           
-                        acoustic emission,                          digital                              
-                        grinding force,                             channels                             
-                        temperature)                                                                     
-
-  **Hydropower Turbine  Pressure and        Not specified (1‑min    \~8 channels N/A        Real         [source](https://researchdata.se/en/catalogue/dataset/2025-35)
-  Friction Monitoring** temperature         over monitoring period)                                      
-                        variables (mean,                                                                 
-                        min, median)                                                                     
-                        sampled at 1‑min                                                                 
-
-  **IMAD‑DS (Industrial Analogue            Segment‑based (length   7 channels   N/A        Real         [source](https://zenodo.org/records/12665499)
-  Multi‑Sensor Anomaly  microphone, 3‑axis  varies)                                                      
-  Detection)**          accelerometer and                                                                
-                        3‑axis gyroscope                                                                 
-
-  **MetroPT‑3 (UCI)**   7 analogue and 8    1 516 948 instances     15 features  ≈0.17 GB   Real         [source](https://archive.ics.uci.edu/dataset/791/metropt+3+dataset)
-                        digital sensors                                                                  
-                        monitoring a metro                                                               
-                        compressor                                                                       
-
-  **Microsoft Azure     Voltage, rotation,  Telemetry: 876 100      4 telemetry  ≈0.03 GB   Real         [source](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance)
-  Predictive            pressure &          records                 sensors                 (synthetic   
-  Maintenance**         vibration telemetry                                                 testbed)     
-                        with                                                                             
-                        error/maintenance                                                                
-                        logs                                                                             
-
-  **SCANIA              107                 Large                   107 features \~1.3 GB   Real         [source](https://researchdata.se/en/catalogue/dataset/2024-34)
-  Component X**         histogram/counter   train/validation/test                                        
-                        features plus       splits                                                       
-                        specification                                                                    
-                        metadata                                                                         
-
-  **Wind Turbine SCADA  High‑dimensional    1 year training +       86--957      N/A        Real         [source](https://zenodo.org/records/15846963)
-  (CARE to Compare)**   SCADA features      4--98 days prediction   features                             
-                        (86, 257 or 957     per dataset (10‑min                                          
-                        depending on farm)  resolution)                                                  
-  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Below you will find detailed descriptions of each dataset, including
 information on labelling, file formats, availability of pre‑defined
